@@ -1,41 +1,11 @@
 const { v4: uuidv4 } = require("uuid");
+const documents = require("../database/documents");
+const users = require("../database/user");
 
-const documents = [
-  {
-    id: uuidv4(),
-    author: "Heytor",
-    updated_at: new Date("2023-08-26"),
-    title: "",
-  },
-  {
-    id: uuidv4(),
-    author: "Jhonatan",
-    updated_at: new Date("2021-10-07"),
-    title: "",
-  },
-  {
-    id: uuidv4(),
-    author: "Rafael",
-    updated_at: new Date("2021-02-28"),
-    title: "",
-  },
-  {
-    id: uuidv4(),
-    author: "Eduardo",
-    updated_at: new Date("2022-01-05"),
-    title: "",
-  },
-  {
-    id: uuidv4(),
-    author: "Bruno",
-    updated_at: new Date("2024-01-24"),
-    title: "",
-  },
-];
 
 class DocumentsController {
   findAll(request, response) {
-    const { initial_date, final_date } = request.query;
+    const { initial_date, final_date, approved } = request.query;
 
     if (!initial_date || !final_date) {
       return response
@@ -58,7 +28,29 @@ class DocumentsController {
       }
     });
 
-    const orderedDocuments = documentsFiltered.sort(function (a, b) {
+
+    const documentFinal = []
+
+    documentsFiltered.forEach((doc) => {
+      if (approved) {
+        if (doc.approved) {
+          documentFinal.push(doc)
+        }
+      } else {
+        documentFinal.push(doc)
+      }
+    })
+
+
+    console.log(documentFinal)
+
+    if (!documentFinal.length) {
+      return response.status(400).json({
+        message: "documentos não encontrados"
+      })
+    }
+
+    const orderedDocuments = documentFinal.sort(function (a, b) {
       if (a.updated_at > b.updated_at) {
         return 1;
       }
@@ -84,6 +76,11 @@ class DocumentsController {
     }
 
     const document = documents.find((doc) => doc.id === id);
+    if (!document) {
+      return response.status(400).json({
+        message: "Documento não encontrado"
+      })
+    }
     return response.json(document).send();
   }
 
@@ -103,11 +100,11 @@ class DocumentsController {
 
     const document = documents.find((doc) => doc.author === author);
     if (!document) {
-      return response.json({
+      return response.status(400).json({
         message: "Documento não encontrado"
       })
     }
-    return response.json(document).send();
+    return response.status(200).json(document).send();
   }
 
   create(request, response) {
@@ -140,8 +137,53 @@ class DocumentsController {
       updated_at: new Date(),
     });
 
-    return response.status(201).send();
+    return response.status(201).json({
+      message: "Criado com Sucesso"
+    });
   }
+
+  toapprove(request, response) {
+    const { title, email } = request.body
+
+    if (!title) {
+      return response.status(400).json({
+        message: "Titulo Obrigatório"
+      })
+    }
+
+    if (!email) {
+      return response.status(400).json({
+        message: "email Obrigatório"
+      })
+    }
+
+    const titleExist = documents.find((doc) => doc.title === title)
+    if (!titleExist) {
+      return response.status(400).json({
+        message: "Não há esse titulo"
+      })
+    }
+
+    documents.forEach((doc) => {
+      if (doc.title === title) {
+        doc.approved = new Date()
+        doc.userEmail = email
+      }
+    })
+
+    const userEmailExist = users.find((user) => user.email === email)
+    if (!userEmailExist) {
+      return response.status(400).json({
+        message: "Email não existente"
+      })
+    }
+
+    return response.status(200).json({
+      message: "approved"
+    })
+
+  }
+
 
   update(request, response) {
     const { id } = request.params;
@@ -175,7 +217,9 @@ class DocumentsController {
       title,
       updated_at: new Date(),
     };
-    return response.status(204).send();
+    return response.status(204).json({
+      message: "Atualizado"
+    });
   }
 
   delete(request, response) {
