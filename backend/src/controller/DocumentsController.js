@@ -25,6 +25,12 @@ const documents = [
     updated_at: new Date("2022-01-05"),
     title: "",
   },
+  {
+    id: uuidv4(),
+    author: "Bruno",
+    updated_at: new Date("2024-01-24"),
+    title: "",
+  },
 ];
 
 class DocumentsController {
@@ -67,7 +73,6 @@ class DocumentsController {
 
   findById(request, response) {
     const { id } = request.params;
-
     if (!id) {
       return response
         .status(400)
@@ -79,6 +84,29 @@ class DocumentsController {
     }
 
     const document = documents.find((doc) => doc.id === id);
+    return response.json(document).send();
+  }
+
+  findByAuthor(request, response) {
+    const { author } = request.params;
+
+    if (!author) {
+      return response
+        .status(400)
+        .json({
+          status: "error",
+          message: "Author é Obrigatório",
+        })
+        .send();
+    }
+
+
+    const document = documents.find((doc) => doc.author === author);
+    if (!document) {
+      return response.json({
+        message: "Documento não encontrado"
+      })
+    }
     return response.json(document).send();
   }
 
@@ -160,5 +188,6 @@ class DocumentsController {
     return response.status(204).send();
   }
 }
+
 
 module.exports = DocumentsController;

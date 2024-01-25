@@ -46,10 +46,13 @@
       "/documents": {
          "post": {
             "tags": [
-               "Create documents."
+               "Documents."
             ],
             "summary": "Create documents.",
             "description": "Create a new document in the application.",
+            "security": [
+               { "bearerAuth": []}
+            ],
             "parameters": [
                {
                   "name": "token",
@@ -85,10 +88,13 @@
          },
          "get": {
             "tags": [
-               "List all documents."
+               "Documents."
             ],
             "summary": "List all documents.",
             "description": "Lists all documents that fall within the specified competence.",
+            "security": [
+               { "bearerAuth": []}
+            ],
             "parameters": [
                {
                   "name": "token",
@@ -139,6 +145,172 @@
                   }
                }
             }
+         }
+      }, 
+      "/documents/findByAuthor/{author}":{
+         "get":{
+            "tags": [
+               "Documents."
+            ],
+            "summary":"Document Search by author",
+            "description":"Document search based on author name",
+            "security": [
+               { "bearerAuth": []}
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "required": true,
+                  "type": "string"
+                  
+               },
+               {
+                  "name":"author",
+                  "in":"path",
+                  "description":"Document author name",
+                  "required": true
+               }
+            ], 
+            "responses":{
+               "200":{
+                  "description": "OK",
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/definitions/DocumentsFind"
+                        }
+                     }
+                  }
+
+               },"400":{
+                  "description":"Error: Bad Request",
+                  "content": { 
+                     "application/json":{
+                        "schema": {
+                           "$ref":"#/definitions/DocumentsError"
+                        }
+                     }
+                  }
+               }
+            } 
+
+         }
+      },"/documents/{id}":{
+         "get":{
+            "tags":[
+               "Documents."
+            ],
+            "summary":"Document Search by ID",
+            "description":"Document search based on ID",
+            "security": [
+               { "bearerAuth": []}
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"id",
+                  "in":"path",
+                  "description":"Document ID",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"OK",
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/definitions/DocumentsFind"
+                        }
+                     }
+                  }
+               },
+               "400":{
+                  "description":"Error, Bad Requered",
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/definitions/DocumentsError"
+                        }
+                     }
+                  }
+               }
+            }
+         }, 
+         "put":{
+            "tags":[
+               "Documents."
+            ],
+            "summary": "Update document",
+            "description":"update document by ID",
+            "security": [
+               { "bearerAuth": []}
+            ], 
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "required": true,
+                  "type":"string"
+               }, 
+               {
+                  "name":"id",
+                  "in":"path",
+                  "description":"Document ID",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "requestBody": {
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "$ref": "#/definitions/Documents"
+                     }
+                  }
+               }
+            },
+            "responses":{
+               "204":{
+                  "description":"Ok"
+               }
+            }
+         }, 
+         "delete":{
+            "tags":[
+               "Documents."
+            ], 
+            "summary":"Delete",
+            "description":"delete document by ID",
+            "security": [
+               { "bearerAuth": []}
+            ], 
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "required": true,
+                  "type":"string"                 
+               },
+               {
+                  "name":"id",
+                  "in":"path",
+                  "required":true,
+                  "'type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Ok"
+                  }
+               }
          }
       }
    },
@@ -222,6 +394,32 @@
                   "type": "string"
                }
             }
+         }
+      },
+      "DocumentsFind": {
+         "type": "object",
+         "properties": {
+            "id": {
+               "type": "string"
+            },
+            "author": {
+               "type": "string"
+            },
+            "updated_at": {
+               "type": "string"
+            },
+            "title": {
+               "type": "string"
+            }
+         }
+      }
+   }, 
+   "components": {
+      "securitySchemes": {
+         "bearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
          }
       }
    }
