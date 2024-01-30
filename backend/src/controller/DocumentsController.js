@@ -6,6 +6,7 @@ const users = require("../database/user");
 class DocumentsController {
   findAll(request, response) {
     const { initial_date, final_date, approved } = request.query;
+    approved == "true" ? true : false
 
     if (!initial_date || !final_date) {
       return response
@@ -30,9 +31,9 @@ class DocumentsController {
 
 
     const documentFinal = []
-
+    console.log(typeof (approved))
     documentsFiltered.forEach((doc) => {
-      if (approved) {
+      if (approved === "true") {
         if (doc.approved) {
           documentFinal.push(doc)
         }
