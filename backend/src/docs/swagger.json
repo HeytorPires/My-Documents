@@ -72,14 +72,21 @@
             },
             "responses": {
                "201": {
-                  "description": "Created"
+                  "description": "OK",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/definitions/MessageApproved"
+                        }
+                     }
+                  }
                },
                "400": {
                   "description": "Error: Bad Request",
                   "content": {
                      "application/json": {
                         "schema": {
-                           "$ref": "#/definitions/DocumentsError"
+                           "$ref": "#/definitions/MessageApproved"
                         }
                      }
                   }
@@ -146,6 +153,56 @@
                }
             }
          }
+      },
+      "/documents/toapprove":{
+         "patch":{
+            "tags":[
+               "Documents."
+            ], 
+            "summary":"Approved",
+            "description":"Approved to document",
+            "security": [
+               { "bearerAuth": []}
+            ],
+            "parameters":[
+               {
+                  "name":"token",
+                  "in":"header",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+               "requestBody": {
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/definitions/DocumentApproved"
+                        }
+                     }
+                  }
+               },
+               "responses":{
+               "200":{
+                  "description":"OK",
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/definitions/MessageApproved"
+                        }
+                     }
+                  }
+               }, "400":{
+                  "description":"Error, Bad Requered",
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/definitions/MessageApproved"
+                        }
+                     }
+                  }
+               }
+            }
+         }
       }, 
       "/documents/findByAuthor/{author}":{
          "get":{
@@ -183,7 +240,8 @@
                      }
                   }
 
-               },"400":{
+               },
+               "400":{
                   "description":"Error: Bad Request",
                   "content": { 
                      "application/json":{
@@ -196,7 +254,8 @@
             } 
 
          }
-      },"/documents/{id}":{
+      },
+      "/documents/{id}":{
          "get":{
             "tags":[
                "Documents."
@@ -279,10 +338,27 @@
             },
             "responses":{
                "204":{
-                  "description":"Ok"
+                  "description":"OK",
+                  "content": { 
+                     "application/json":{
+                        "schema": {
+                           "$ref":"#/definitions/MessageUpdate"
+                        }
+                     }
+                  }
+               }
+            , "400":{
+               "description":"Error: Bad Request",
+               "content": { 
+                  "application/json":{
+                     "schema": {
+                        "$ref":"#/definitions/DocumentsError"
+                     }
+                  }
                }
             }
-         }, 
+         }
+         },
          "delete":{
             "tags":[
                "Documents."
@@ -342,6 +418,24 @@
                "type": "string"
             }
          }
+      }, 
+      "MessageApproved": {
+         "type":"object",
+         "properties":{
+               "message":{
+                  "type":"string"
+               }
+         }
+      },
+      "DocumentApproved":{
+         "type":"object",
+         "properties":{
+            "title":{
+               "type":"string"
+            }, "email":{
+               "type":"string"
+            }
+         }
       },
       "SessionUnauthorized": {
          "type": "object",
@@ -375,7 +469,15 @@
                "type": "string"
             }
          }
-      },
+      }, 
+      "MessageUpdate":{
+         "type":"object",
+         "properties":{
+            "message":{
+               "type":"string"
+            }
+         }
+      }, 
       "DocumentsListAllResponse": {
          "type": "array",
          "items": {
@@ -386,11 +488,17 @@
                },
                "author": {
                   "type": "string"
-               },
-               "title": {
-                  "type": "string"
+               }, 
+               "userEmail":{
+                  "type":"string"
                },
                "updated_at": {
+                  "type": "string"
+               }, 
+               "approved":{
+                  "type":"string"
+               },
+               "title": {
                   "type": "string"
                }
             }
@@ -404,9 +512,15 @@
             },
             "author": {
                "type": "string"
+            }, 
+            "userEmail":{
+               "type":"string"
             },
             "updated_at": {
                "type": "string"
+            }, 
+            "approved":{
+               "type":"string"
             },
             "title": {
                "type": "string"

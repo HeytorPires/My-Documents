@@ -8,14 +8,17 @@ const documentsRouter = express.Router();
 
 const documentsController = new DocumentsController();
 
-documentsRouter.use(ensureAutenticated);
+// documentsRouter.use(ensureAutenticated);
 
 documentsRouter.get("/", documentsController.findAll);
-documentsRouter.get("/:id", documentsController.findById);
+documentsRouter.get("/findById/:id", documentsController.findById);
+documentsRouter.get("/findByAuthor/:author", documentsController.findByAuthor)
 
-documentsRouter.use(ensureAdministrator);
+// documentsRouter.use(ensureAdministrator);
 documentsRouter.post("/", documentsController.create);
 documentsRouter.put("/:id", documentsController.update);
 documentsRouter.delete("/:id", documentsController.delete);
+documentsRouter.patch("/toapprove", documentsController.toapprove)
+
 
 module.exports = documentsRouter;
