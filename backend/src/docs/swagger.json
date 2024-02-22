@@ -1,540 +1,507 @@
 {
-   "openapi": "3.1.0",
-   "info": {
-      "title": "My Documents",
-      "version": "1.0.0",
-      "contact": {
-         "email": ""
+  "openapi": "3.1.0",
+  "info": {
+    "title": "My Documents",
+    "version": "1.0.0",
+    "contact": {
+      "email": ""
+    }
+  },
+  "paths": {
+    "/session": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Authentication",
+        "description": "Allows the user to authenticate on the platform",
+        "produces": ["application/json"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Session"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#definitions/SessionResponseSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#definitions/SessionUnauthorized"
+            }
+          }
+        }
       }
-   },
-   "paths": {
-      "/session": {
-         "post": {
-            "tags": [
-               "Authentication"
-            ],
-            "summary": "Authentication",
-            "description": "Allows the user to authenticate on the platform",
-            "produces": [
-               "application/json"
-            ],
-            "requestBody": {
-               "content": {
-                  "application/json": {
-                     "schema": {
-                        "$ref": "#/definitions/Session"
-                     }
-                  }
-               }
-            },
-            "responses": {
-               "200": {
-                  "description": "Success",
-                  "schema": {
-                     "$ref": "#definitions/SessionResponseSuccess"
-                  }
-               },
-               "401": {
-                  "description": "Unauthorized",
-                  "schema": {
-                     "$ref": "#definitions/SessionUnauthorized"
-                  }
-               }
+    },
+    "/documents": {
+      "post": {
+        "tags": ["Documents."],
+        "summary": "Create documents.",
+        "description": "Create a new document in the application.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Documents"
+              }
             }
-         }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/MessageApproved"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/MessageApproved"
+                }
+              }
+            }
+          }
+        }
       },
-      "/documents": {
-         "post": {
-            "tags": [
-               "Documents."
-            ],
-            "summary": "Create documents.",
-            "description": "Create a new document in the application.",
-            "security": [
-               { "bearerAuth": []}
-            ],
-            "parameters": [
-               {
-                  "name": "token",
-                  "in": "header",
-                  "required": true,
-                  "type": "string"
-               }
-            ],
-            "requestBody": {
-               "content": {
-                  "application/json": {
-                     "schema": {
-                        "$ref": "#/definitions/Documents"
-                     }
-                  }
-               }
-            },
-            "responses": {
-               "201": {
-                  "description": "OK",
-                  "content": {
-                     "application/json": {
-                        "schema": {
-                           "$ref": "#/definitions/MessageApproved"
-                        }
-                     }
-                  }
-               },
-               "400": {
-                  "description": "Error: Bad Request",
-                  "content": {
-                     "application/json": {
-                        "schema": {
-                           "$ref": "#/definitions/MessageApproved"
-                        }
-                     }
-                  }
-               }
+      "get": {
+        "tags": ["Documents."],
+        "summary": "List all documents.",
+        "description": "Lists all documents that fall within the specified competence.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "initial_date",
+            "in": "query",
+            "description": "The start date for the query (format: YYYY-MM-DD)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
             }
-         },
-         "get": {
-            "tags": [
-               "Documents."
-            ],
-            "summary": "List all documents.",
-            "description": "Lists all documents that fall within the specified competence.",
-            "security": [
-               { "bearerAuth": []}
-            ],
-            "parameters": [
-               {
-                  "name": "token",
-                  "in": "header",
-                  "required": true,
-                  "type": "string"
-               },
-               {
-                  "name": "initial_date",
-                  "in": "query",
-                  "description": "The start date for the query (format: YYYY-MM-DD)",
-                  "required": true,
-                  "schema": {
-                     "type": "string",
-                     "format": "date"
-                  }
-               },
-               {
-                  "name": "final_date",
-                  "in": "query",
-                  "description": "The end date for the query (format: YYYY-MM-DD)",
-                  "required": true,
-                  "schema": {
-                     "type": "string",
-                     "format": "date"
-                  }
-               }
-            ],
-            "responses": {
-               "200": {
-                  "description": "OK",
-                  "content": {
-                     "application/json": {
-                        "schema": {
-                           "$ref": "#/definitions/DocumentsListAllResponse"
-                        }
-                     }
-                  }
-               },
-               "400": {
-                  "description": "Error: Bad Request",
-                  "content": {
-                     "application/json": {
-                        "schema": {
-                           "$ref": "#/definitions/DocumentsError"
-                        }
-                     }
-                  }
-               }
+          },
+          {
+            "name": "final_date",
+            "in": "query",
+            "description": "The end date for the query (format: YYYY-MM-DD)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
             }
-         }
-      },
-      "/documents/toapprove":{
-         "patch":{
-            "tags":[
-               "Documents."
-            ], 
-            "summary":"Approved",
-            "description":"Approved to document",
-            "security": [
-               { "bearerAuth": []}
-            ],
-            "parameters":[
-               {
-                  "name":"token",
-                  "in":"header",
-                  "required":true,
-                  "type":"string"
-               }
-            ],
-               "requestBody": {
-                  "content": {
-                     "application/json": {
-                        "schema": {
-                           "$ref": "#/definitions/DocumentApproved"
-                        }
-                     }
-                  }
-               },
-               "responses":{
-               "200":{
-                  "description":"OK",
-                  "content":{
-                     "application/json":{
-                        "schema":{
-                           "$ref":"#/definitions/MessageApproved"
-                        }
-                     }
-                  }
-               }, "400":{
-                  "description":"Error, Bad Requered",
-                  "content":{
-                     "application/json":{
-                        "schema":{
-                           "$ref":"#/definitions/MessageApproved"
-                        }
-                     }
-                  }
-               }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/DocumentsListAllResponse"
+                }
+              }
             }
-         }
-      }, 
-      "/documents/findByAuthor/{author}":{
-         "get":{
-            "tags": [
-               "Documents."
-            ],
-            "summary":"Document Search by author",
-            "description":"Document search based on author name",
-            "security": [
-               { "bearerAuth": []}
-            ],
-            "parameters":[
-               {
-                  "name":"token",
-                  "in":"header",
-                  "required": true,
-                  "type": "string"
-                  
-               },
-               {
-                  "name":"author",
-                  "in":"path",
-                  "description":"Document author name",
-                  "required": true
-               }
-            ], 
-            "responses":{
-               "200":{
-                  "description": "OK",
-                  "content":{
-                     "application/json":{
-                        "schema":{
-                           "$ref":"#/definitions/DocumentsFind"
-                        }
-                     }
-                  }
-
-               },
-               "400":{
-                  "description":"Error: Bad Request",
-                  "content": { 
-                     "application/json":{
-                        "schema": {
-                           "$ref":"#/definitions/DocumentsError"
-                        }
-                     }
-                  }
-               }
-            } 
-
-         }
-      },
-      "/documents/{id}":{
-         "get":{
-            "tags":[
-               "Documents."
-            ],
-            "summary":"Document Search by ID",
-            "description":"Document search based on ID",
-            "security": [
-               { "bearerAuth": []}
-            ],
-            "parameters":[
-               {
-                  "name":"token",
-                  "in":"header",
-                  "required":true,
-                  "type":"string"
-               },
-               {
-                  "name":"id",
-                  "in":"path",
-                  "description":"Document ID",
-                  "required":true,
-                  "type":"string"
-               }
-            ],
-            "responses":{
-               "200":{
-                  "description":"OK",
-                  "content":{
-                     "application/json":{
-                        "schema":{
-                           "$ref":"#/definitions/DocumentsFind"
-                        }
-                     }
-                  }
-               },
-               "400":{
-                  "description":"Error, Bad Requered",
-                  "content":{
-                     "application/json":{
-                        "schema":{
-                           "$ref":"#/definitions/DocumentsError"
-                        }
-                     }
-                  }
-               }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/DocumentsError"
+                }
+              }
             }
-         }, 
-         "put":{
-            "tags":[
-               "Documents."
-            ],
-            "summary": "Update document",
-            "description":"update document by ID",
-            "security": [
-               { "bearerAuth": []}
-            ], 
-            "parameters":[
-               {
-                  "name":"token",
-                  "in":"header",
-                  "required": true,
-                  "type":"string"
-               }, 
-               {
-                  "name":"id",
-                  "in":"path",
-                  "description":"Document ID",
-                  "required":true,
-                  "type":"string"
-               }
-            ],
-            "requestBody": {
-               "content": {
-                  "application/json": {
-                     "schema": {
-                        "$ref": "#/definitions/Documents"
-                     }
-                  }
-               }
-            },
-            "responses":{
-               "204":{
-                  "description":"OK",
-                  "content": { 
-                     "application/json":{
-                        "schema": {
-                           "$ref":"#/definitions/MessageUpdate"
-                        }
-                     }
-                  }
-               }
-            , "400":{
-               "description":"Error: Bad Request",
-               "content": { 
-                  "application/json":{
-                     "schema": {
-                        "$ref":"#/definitions/DocumentsError"
-                     }
-                  }
-               }
-            }
-         }
-         },
-         "delete":{
-            "tags":[
-               "Documents."
-            ], 
-            "summary":"Delete",
-            "description":"delete document by ID",
-            "security": [
-               { "bearerAuth": []}
-            ], 
-            "parameters":[
-               {
-                  "name":"token",
-                  "in":"header",
-                  "required": true,
-                  "type":"string"                 
-               },
-               {
-                  "name":"id",
-                  "in":"path",
-                  "required":true,
-                  "'type":"string"
-               }
-            ],
-            "responses":{
-               "200":{
-                  "description":"Ok"
-                  }
-               }
-         }
+          }
+        }
       }
-   },
-   "definitions": {
-      "Session": {
-         "type": "object",
-         "properties": {
-            "email": {
-               "type": "string"
-            },
-            "password": {
-               "type": "string"
+    },
+    "/documents/toapprove": {
+      "patch": {
+        "tags": ["Documents."],
+        "summary": "Approved",
+        "description": "Approved to document",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/DocumentApproved"
+              }
             }
-         }
-      },
-      "SessionResponseSuccess": {
-         "type": "object",
-         "properties": {
-            "id": {
-               "type": "integer"
-            },
-            "email": {
-               "type": "integer"
-            },
-            "name": {
-               "type": "string"
-            },
-            "token": {
-               "type": "string"
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/MessageApproved"
+                }
+              }
             }
-         }
-      }, 
-      "MessageApproved": {
-         "type":"object",
-         "properties":{
-               "message":{
-                  "type":"string"
-               }
-         }
-      },
-      "DocumentApproved":{
-         "type":"object",
-         "properties":{
-            "title":{
-               "type":"string"
-            }, "email":{
-               "type":"string"
+          },
+          "400": {
+            "description": "Error, Bad Requered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/MessageApproved"
+                }
+              }
             }
-         }
-      },
-      "SessionUnauthorized": {
-         "type": "object",
-         "properties": {
-            "status": {
-               "type": "string"
-            },
-            "message": {
-               "type": "string"
-            }
-         }
-      },
-      "Documents": {
-         "type": "object",
-         "properties": {
-            "author": {
-               "type": "string"
-            },
-            "title": {
-               "type": "string"
-            }
-         }
-      },
-      "DocumentsError": {
-         "type": "object",
-         "properties": {
-            "status": {
-               "type": "string"
-            },
-            "message": {
-               "type": "string"
-            }
-         }
-      }, 
-      "MessageUpdate":{
-         "type":"object",
-         "properties":{
-            "message":{
-               "type":"string"
-            }
-         }
-      }, 
-      "DocumentsListAllResponse": {
-         "type": "array",
-         "items": {
-            "type": "object",
-            "properties": {
-               "id": {
-                  "type": "string"
-               },
-               "author": {
-                  "type": "string"
-               }, 
-               "userEmail":{
-                  "type":"string"
-               },
-               "updated_at": {
-                  "type": "string"
-               }, 
-               "approved":{
-                  "type":"string"
-               },
-               "title": {
-                  "type": "string"
-               }
-            }
-         }
-      },
-      "DocumentsFind": {
-         "type": "object",
-         "properties": {
-            "id": {
-               "type": "string"
-            },
-            "author": {
-               "type": "string"
-            }, 
-            "userEmail":{
-               "type":"string"
-            },
-            "updated_at": {
-               "type": "string"
-            }, 
-            "approved":{
-               "type":"string"
-            },
-            "title": {
-               "type": "string"
-            }
-         }
+          }
+        }
       }
-   }, 
-   "components": {
-      "securitySchemes": {
-         "bearerAuth": {
-            "type": "http",
-            "scheme": "bearer",
-            "bearerFormat": "JWT"
-         }
+    },
+    "/documents/findByAuthor/{author}": {
+      "get": {
+        "tags": ["Documents."],
+        "summary": "Document Search by author",
+        "description": "Document search based on author name",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "author",
+            "in": "path",
+            "description": "Document author name",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/DocumentsFind"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/DocumentsError"
+                }
+              }
+            }
+          }
+        }
       }
-   }
+    },
+    "/documents/{id}": {
+      "get": {
+        "tags": ["Documents."],
+        "summary": "Document Search by ID",
+        "description": "Document search based on ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Document ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/DocumentsFind"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error, Bad Requered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/DocumentsError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Documents."],
+        "summary": "Update document",
+        "description": "update document by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Document ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Documents"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/MessageUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/DocumentsError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Documents."],
+        "summary": "Delete",
+        "description": "delete document by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "'type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Session": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "SessionResponseSuccess": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "email": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "MessageApproved": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "DocumentApproved": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "SessionUnauthorized": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "Documents": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "DocumentsError": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "MessageUpdate": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "DocumentsListAllResponse": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "userEmail": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "approved": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "DocumentsFind": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "userEmail": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "approved": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
 }

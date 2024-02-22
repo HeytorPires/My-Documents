@@ -12,13 +12,12 @@ const documentsController = new DocumentsController();
 
 documentsRouter.get("/", documentsController.findAll);
 documentsRouter.get("/findById/:id", documentsController.findById);
-documentsRouter.get("/findByAuthor/:author", documentsController.findByAuthor)
+documentsRouter.get("/findByAuthor/:author", documentsController.findByAuthor);
 
 // documentsRouter.use(ensureAdministrator);
 documentsRouter.post("/", documentsController.create);
 documentsRouter.put("/:id", documentsController.update);
 documentsRouter.delete("/:id", documentsController.delete);
-documentsRouter.patch("/toapprove", documentsController.toapprove)
-
+documentsRouter.patch("/toapprove", documentsController.toapprove);
 
 module.exports = documentsRouter;

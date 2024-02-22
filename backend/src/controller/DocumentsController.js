@@ -2,11 +2,10 @@ const { v4: uuidv4 } = require("uuid");
 const documents = require("../database/documents");
 const users = require("../database/user");
 
-
 class DocumentsController {
   findAll(request, response) {
     const { initial_date, final_date, approved } = request.query;
-    approved == "true" ? true : false
+    approved == "true" ? true : false;
 
     if (!initial_date || !final_date) {
       return response
@@ -29,26 +28,24 @@ class DocumentsController {
       }
     });
 
-
-    const documentFinal = []
-    console.log(typeof (approved))
+    const documentFinal = [];
+    console.log(typeof approved);
     documentsFiltered.forEach((doc) => {
       if (approved === "true") {
         if (doc.approved) {
-          documentFinal.push(doc)
+          documentFinal.push(doc);
         }
       } else {
-        documentFinal.push(doc)
+        documentFinal.push(doc);
       }
-    })
+    });
 
-
-    console.log(documentFinal)
+    console.log(documentFinal);
 
     if (!documentFinal.length) {
       return response.status(400).json({
-        message: "documentos não encontrados"
-      })
+        message: "documentos não encontrados",
+      });
     }
 
     const orderedDocuments = documentFinal.sort(function (a, b) {
@@ -79,8 +76,8 @@ class DocumentsController {
     const document = documents.find((doc) => doc.id === id);
     if (!document) {
       return response.status(400).json({
-        message: "Documento não encontrado"
-      })
+        message: "Documento não encontrado",
+      });
     }
     return response.json(document).send();
   }
@@ -98,12 +95,11 @@ class DocumentsController {
         .send();
     }
 
-
     const document = documents.find((doc) => doc.author === author);
     if (!document) {
       return response.status(400).json({
-        message: "Documento não encontrado"
-      })
+        message: "Documento não encontrado",
+      });
     }
     return response.status(200).json(document).send();
   }
@@ -139,52 +135,50 @@ class DocumentsController {
     });
 
     return response.status(201).json({
-      message: "Criado com Sucesso"
+      message: "Criado com Sucesso",
     });
   }
 
   toapprove(request, response) {
-    const { title, email } = request.body
+    const { title, email } = request.body;
 
     if (!title) {
       return response.status(400).json({
-        message: "Titulo Obrigatório"
-      })
+        message: "Titulo Obrigatório",
+      });
     }
 
     if (!email) {
       return response.status(400).json({
-        message: "email Obrigatório"
-      })
+        message: "email Obrigatório",
+      });
     }
 
-    const titleExist = documents.find((doc) => doc.title === title)
+    const titleExist = documents.find((doc) => doc.title === title);
     if (!titleExist) {
       return response.status(400).json({
-        message: "Não há esse titulo"
-      })
+        message: "Não há esse titulo",
+      });
     }
 
     documents.forEach((doc) => {
       if (doc.title === title) {
-        doc.approved = new Date()
-        doc.userEmail = email
+        doc.approved = new Date();
+        doc.userEmail = email;
       }
-    })
+    });
 
-    const userEmailExist = users.find((user) => user.email === email)
+    const userEmailExist = users.find((user) => user.email === email);
     if (!userEmailExist) {
       return response.status(400).json({
-        message: "Email não existente"
-      })
+        message: "Email não existente",
+      });
     }
 
     return response.status(200).json({
-      message: "approved"
-    })
-
+      message: "approved",
+    });
   }
-
 
   update(request, response) {
     const { id } = request.params;
@@ -219,7 +213,7 @@ class DocumentsController {
       updated_at: new Date(),
     };
     return response.status(204).json({
-      message: "Atualizado"
+      message: "Atualizado",
     });
   }
 
@@ -233,6 +227,5 @@ class DocumentsController {
     return response.status(204).send();
   }
 }
-
 
 module.exports = DocumentsController;
