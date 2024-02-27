@@ -7,6 +7,8 @@ import Stack from '@mui/material/Stack'
 import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
 import ButtonGroup from '@mui/material/ButtonGroup'
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 function App() {
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
@@ -103,11 +105,22 @@ function App() {
       <hr />
 
       <h2>Filtro por Autor</h2>
-      <input
-        type="text"
-        placeholder="Nome do Autor"
-        onBlur={(e) => setAuthor(e.target.value)}
-      />
+       <Box
+      component="form"
+      sx={{
+        '& > :not(style)': { m: 1, width: '20ch' },
+      }}
+      noValidate
+      autoComplete="off"
+    >
+      <TextField 
+      id="outlined-basic" 
+      label="Autor" 
+      variant="outlined" 
+      type="text"
+      placeholder="Nome do autor"
+      onBlur={(e) => setAuthor(e.target.value)}/>
+      </Box>
       <br />
       <br />
       <Stack spacing={2} direction="row">
@@ -121,8 +134,10 @@ function App() {
       {documents.map((document) => {
         return (
           <div key={document.id}>
-            <h3>Titulo: {document.title}</h3>
+            <h2>Titulo: {document.title}</h2>
+            <h2>Autor(a): {document.author}</h2>
             <h3>Aprovado: {document.approved}</h3>
+
             <ButtonGroup variant="contained" aria-label="Basic button group">
               <Button onClick={() => approvedDocuments(document.title)}>
                 Aprovar
