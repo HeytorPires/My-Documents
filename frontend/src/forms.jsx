@@ -40,7 +40,7 @@ function Forms() {
     >
       <TextField 
       id="outlined-basic" 
-      label="Outlined" 
+      label="Titulo" 
       variant="outlined" 
       type="text"
       placeholder="Digite um Titulo"
